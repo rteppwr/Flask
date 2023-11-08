@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <!-- Nastavení titulku stránky -->
+    <title>Rozsazení v lodích na vodáckém kurzu 2023 SPŠE Ječná</title>
+
+    <!-- Nastavení viewportu pro responzivní design -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8">
+
+    <!-- Stylování stránky pomocí CSS -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f2f2f2;
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2); /* Přidání drop shadow */
+        }
+
+        h1 {
+            color: #007BFF;
+            font-size: 24px;
+            border-radius: 10px;
+            padding: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5); /* Drop shadow pro nadpis */
+        }
+
+        a {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 20px;
+            background-color: #009688; /* Nová barva tlačítka */
+            color: white;
+            text-decoration: none;
+            border-radius: 10px; /* Zaoblené rohy */
+            font-size: 18px;
+            box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2); /* Přidání drop shadow a rozostření */
+        }
+
+        .participant {
+            border: 3px solid #009688; /* Nová barva ohraničení */
+            max-width: 400px;
+            padding: 10px;
+            margin: 10px auto;
+            font-size: 18px;
+            background-color: #fff; /* Nová barva pozadí */
+            border-radius: 10px; /* Zaoblené rohy */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Drop shadow */
+        }
+
+        @media only screen and (max-width: 600px) {
+            h1 {
+                font-size: 200%;
+            }
+
+            a {
+                font-size: 200%;
+            }
+
+            .participant {
+                max-width: 90%;
+            }
+        }
+    </style>
+
+</head>
+<body>
+<!-- Nadpis stránky -->
+<h1>Rozsazení v lodích na vodáckém kurzu 2023 SPŠE Ječná</h1>
+
+<!-- Seznam registrovaných účastníků -->
+<h2>Seznam registrovaných účastníků:</h2>
+{% if registered_people %}
+    <ul>
+        <!-- Cyklus pro zobrazení údajů o účastnících -->
+        {% for ucastnik in registered_people %}
+            <p class="participant">
+                <strong>Přezdívka osoby:</strong> {{ ucastnik['nick'] }}<br>
+                <strong>Plavat umí:</strong> {{ "Ano" if ucastnik['je_plavec'] else "Ne" }}<br>
+                <!-- Podmíněné zobrazení kamaráda na lodi -->
+                {% if ucastnik['kanoe_kamarad'] %}
+                    <strong>S kým by chtěl/a být na lodi:</strong> {{ ucastnik['kanoe_kamarad'] }}
+                {% endif %}
+            </p>
+        {% endfor %}
+    </ul>
+{% else %}
+    <!-- Zpráva v případě, že nejsou žádní účastníci -->
+    <p class="no-participants">Žádní účastníci nejsou zatím přihlášeni.</p>
+{% endif %}
+
+<!-- Odkaz na stránku pro registraci -->
+<a href="/registrace">Registrovat se</a>
+
+<!-- Odkaz na stránku pro zpětnou vazbu -->
+<a href="/feedback" class="a">Feedback</a>
+
+</body>
+</html>

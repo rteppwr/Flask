@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <!-- Nastavení titulku stránky -->
+    <title>Registrace</title>
+
+    <!-- Nastavení viewportu pro responzivní design -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8">
+
+    <!-- Stylování stránky pomocí CSS -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f2f2f2;
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2); /* Přidání drop shadow */
+        }
+
+        h1 {
+            color: #007BFF;
+            font-size: 24px;
+            border-radius: 10px;
+            padding: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5); /* Drop shadow pro nadpis */
+        }
+
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #f9f9f9; /* Nová barva pozadí */
+            padding: 20px;
+            border-radius: 10px; /* Zaoblené rohy */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Drop shadow */
+        }
+
+        label {
+            display: block;
+            text-align: left;
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            height: 30px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px; /* Zaoblené rohy */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); /* Rozostření */
+        }
+
+        input[type="submit"] {
+            background-color: #009688; /* Nová barva tlačítka */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Rozostření a drop shadow */
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 10px;
+            text-decoration: none;
+            color: #009688; /* Nová barva odkazu */
+        }
+
+        @media only screen and (max-width: 600px) {
+            h1 {
+                font-size: 200%;
+            }
+
+            a {
+                font-size: 200%;
+            }
+
+            input[type="text"],
+            select {
+                font-size: 150%;
+            }
+
+            input[type="submit"] {
+                font-size: 150%;
+            }
+        }
+    </style>
+
+</head>
+<body>
+<!-- Nadpis stránky -->
+<h1>Registrace</h1>
+
+<!-- Formulář pro registraci -->
+<form action="/zpracuj_registraci" method="post">
+    <!-- Popisek a pole pro přezdívku osoby -->
+    <label for="nick">Přezdívka osoby (2-20 znaků, čísla a písmena bez mezer):</label>
+    <input type="text" id="nick" name="nick" required pattern="[a-zA-Z0-9]{2,20}">
+    <span id="nick-error" style="color: red;"></span>
+    <br><br>
+
+    <!-- Popisek a pole pro jméno -->
+    <label for="jmeno">Jméno (1-50 znaků, čísla a písmena bez mezer):</label>
+    <input type="text" id="jmeno" name="jmeno" required pattern="[a-zA-ZÀ-ž]{1,50}">
+    <br><br>
+
+    <!-- Popisek a pole pro příjmení -->
+    <label for="prijmeni">Příjmení (1-50 znaků, čísla a písmena bez mezer):</label>
+    <input type="text" id="prijmeni" name="prijmeni" required pattern="[a-zA-ZÀ-ž]{1,50}">
+    <br><br>
+
+    <!-- Popisek a výběrový seznam pro pohlaví -->
+    <label for="pohlavi">Pohlaví</label>
+    <select id="pohlavi" name="pohlavi" required>
+        <option value="muz">Muž</option>
+        <option value="zena">Žena</option>
+    </select>
+    <br><br>
+
+    <!-- Popisek a výběrový seznam pro umění plavat -->
+    <label for="je_plavec">Umíte plavat?</label>
+    <select id="je_plavec" name="je_plavec" required>
+        <option value="1">Ano</option>
+        <option value="0">Ne</option>
+    </select>
+    <br><br>
+
+    <!-- Popisek a pole pro zvolení kamaráda na lodi (nepovinné) -->
+    <label for="kanoe_kamarad">S kým byste chtěli být na lodi (nepovinné):</label>
+    <input type="text" id="kanoe_kamarad" name="kanoe_kamarad" pattern="(^$|[a-zA-Z0-9]{2,20}">
+    <br><br>
+
+    <!-- Tlačítko pro odeslání formuláře -->
+    <input id="submit" type="submit" value="Registrovat se">
+
+    <!-- Odkaz na stornování registrace -->
+    <a href="/">Storno</a>
+</form>
+
+<!-- Zpráva v případě úspěšné registrace -->
+{% if message %}
+    <p>{{ message }}</p>
+{% endif %}
+
+<!-- JavaScript pro ověření dostupnosti přezdívky -->
+<script>
+    const nickInput = document.getElementById('nick');
+    const nickError = document.getElementById('nick-error');
+    const submitButton = document.getElementById('submit')
+
+    nickInput.addEventListener('blur', () => {
+        const nick = nickInput.value;
+        if (nick) {
+            fetch(`/api/check-nickname/${nick}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        nickError.textContent = 'Tento nickname již existuje.';
+                        nickError.style.color = 'red';
+                        submitButton.disabled = false
+                    } else {
+                        nickError.textContent = 'Tento nickname je volný';
+                        nickError.style.color = 'green';
+                        submitButton.disabled = false
+                    }
+                })
+                .catch(error => console.error(error));
+        }
+    });
+</script>
+</body>
+</html>

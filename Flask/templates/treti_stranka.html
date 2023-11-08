@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <!-- Nastavení titulku stránky -->
+    <title>RECENZE</title>
+
+    <!-- Nastavení viewportu pro responzivní design -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8">
+
+    <!-- Stylování stránky pomocí CSS -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f2f2f2;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Přidání drop shadow */
+        }
+
+        h1 {
+            color: #007BFF;
+            font-size: 24px;
+            border-radius: 10px; /* Zaoblené rohy */
+            padding: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5); /* Drop shadow pro nadpis */
+        }
+
+        a {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 20px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 18px;
+            transition: background-color 0.3s, transform 0.3s; /* Přidání animace */
+        }
+
+        a:hover {
+            background-color: #0056b3; /* Barevná změna při najetí myši */
+            transform: scale(1.1); /* Zvětšení tlačítka při najetí myši */
+        }
+
+        .review {
+            border: 3px solid black;
+            max-width: 400px;
+            padding: 10px;
+            margin: 10px auto;
+            font-size: 18px;
+            background-color: #fff;
+            border-radius: 10px; /* Zaoblené rohy */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Drop shadow */
+        }
+
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 10px;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Drop shadow */
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        @media only screen and (max-width: 600px) {
+            h1 {
+                font-size: 200%;
+            }
+
+            a {
+                font-size: 200%;
+            }
+
+            .review {
+                max-width: 90%;
+            }
+        }
+    </style>
+
+
+</head>
+<body>
+<!-- Odkaz pro návrat -->
+<a href="/">Zpět</a>
+
+<!-- Nadpis stránky -->
+<h1>Recenze</h1>
+
+<!-- Formulář pro přidání recenze -->
+<form id="reviewForm" action="/zpracuj_recenzi" method="post">
+    <h2>Přidejte recenzi</h2>
+    <label for="name">Vaše jméno:</label>
+    <input type="text" id="name" name="name" required>
+    <br>
+    <label for="comment">Vaše recenze:</label>
+    <textarea id="comment" name="comment" rows="4" cols="50" required></textarea>
+    <br>
+    <input type="submit" value="Odeslat recenzi">
+</form>
+
+<br>
+<!-- Zpráva v případě úspěšné registrace -->
+{% if message %}
+    <p style="font-weight: bolder">{{ message }}</p>
+{% endif %}
+<br>
+
+<!-- Seznam recenzí -->
+<h2>Seznam recenzí:</h2>
+<div id="reviews">
+    <!-- Zde se ukážou recenze -->
+</div>
+
+<script>
+    // Funkce pro zobrazení recenzí
+    function displayReviews() {
+        fetch('/get_reviews')
+            .then(response => response.json())
+            .then(data => {
+                const reviewsDiv = document.getElementById("reviews");
+                reviewsDiv.innerHTML = "";
+
+                if (data && data.length > 0) {
+                    const ul = document.createElement("ul");
+                    data.forEach(review => {
+                        const li = document.createElement("li");
+                        li.className = "review";
+                        li.innerHTML = `
+                        <strong>Jméno recenzenta:</strong> ${review.jmeno}<br>
+                        <strong>Recenze:</strong> ${review.recenze}<br>
+                    `;
+                        ul.appendChild(li);
+                    });
+                    reviewsDiv.appendChild(ul);
+                } else {
+                    const noReviews = document.createElement("p");
+                    noReviews.className = "no-reviews";
+                    noReviews.textContent = "Žádné recenze nejsou k dispozici.";
+                    reviewsDiv.appendChild(noReviews);
+                }
+            });
+    }
+
+    displayReviews();
+    setInterval(displayReviews, 5000);
+</script>
+</body>
+</html>
